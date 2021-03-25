@@ -4,7 +4,7 @@
   <parent>
     <artifactId>rsmart-integration</artifactId>
     <groupId>com.rsmart</groupId>
-    <version>20-SNAPSHOT</version>
+    <version>21-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
   <name>rsmart-integration-impl</name>
@@ -57,11 +57,11 @@
       <artifactId>commons-logging</artifactId>
     </dependency>
     <dependency>
-      <groupId>${sakai.spring.groupId}</groupId>
-      <artifactId>${sakai.spring.artifactId}</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>${sakai.spring.groupId}</groupId>
+      <groupId>org.springframework</groupId>
       <artifactId>spring-orm</artifactId>
     </dependency>
     <dependency>

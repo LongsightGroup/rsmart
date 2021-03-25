@@ -5,7 +5,7 @@
     <parent>
         <artifactId>gradebook2-export</artifactId>
         <groupId>com.rsmart</groupId>
-        <version>20-SNAPSHOT</version>
+        <version>21-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -44,11 +44,11 @@
             <artifactId>sakai-component-manager</artifactId>
         </dependency>
         <dependency>
-            <groupId>${sakai.spring.groupId}</groupId>
-            <artifactId>${sakai.spring.artifactId}</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>${sakai.spring.groupId}</groupId>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
         </dependency>
         <dependency>
@@ -113,7 +113,7 @@
         <dependency>
             <groupId>org.sakaiproject.kernel</groupId>
             <artifactId>sakai-kernel-impl</artifactId>
-            <version>20-SNAPSHOT</version>
+            <version>21-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.sakaiproject.edu-services.gradebook</groupId>

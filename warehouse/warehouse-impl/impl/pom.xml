@@ -4,7 +4,7 @@
   <parent>
     <artifactId>rsmart-warehouse</artifactId>
     <groupId>com.rsmart</groupId>
-    <version>20-SNAPSHOT</version>
+    <version>21-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
   <artifactId>rsmart-warehouse-impl</artifactId>
@@ -48,8 +48,8 @@
     </dependency>
 <!--org.sakaiprojectsakai-db-api${sakai.version}-->
     <dependency>
-      <groupId>${sakai.hibernate.groupId}</groupId>
-      <artifactId>${sakai.hibernate.artifactId}</artifactId>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-core</artifactId>
       <version>${sakai.hibernate.version}</version>
     </dependency>
 <!--org.sakaiprojectsakai-entity-api${sakai.version}-->
@@ -95,8 +95,8 @@
       <version>1.0</version>
     </dependency>
     <dependency>
-      <groupId>${sakai.spring.groupId}</groupId>
-      <artifactId>${sakai.spring.artifactId}</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
       <version>${sakai.spring.version}</version>
     </dependency>
   </dependencies>

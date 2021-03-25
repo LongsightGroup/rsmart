@@ -2,8 +2,8 @@ package com.rsmart.customer.integration.processor.cle.cm;
 
 import org.hibernate.Query;
 import org.sakaiproject.db.api.SqlService;
-import org.springframework.orm.hibernate4.HibernateCallback;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.HibernateCallback;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.sakaiproject.coursemanagement.api.Section;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

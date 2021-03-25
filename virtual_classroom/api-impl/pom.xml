@@ -10,7 +10,7 @@
       <artifactId>virtual-classroom-base</artifactId>
       <groupId>com.rsmart</groupId>
       <relativePath>../pom.xml</relativePath>
-      <version>20-SNAPSHOT</version>
+      <version>21-SNAPSHOT</version>
     </parent>
    <repositories>
       <repository>
@@ -53,7 +53,7 @@
      <dependency>
        <groupId>com.rsmart</groupId>
        <artifactId>virtual-classroom-api</artifactId>
-       <version>20-SNAPSHOT</version>
+       <version>21-SNAPSHOT</version>
        <scope>provided</scope>        
      </dependency>
     <dependency>
@@ -139,7 +139,7 @@
       <version>1.6</version>
     </dependency>
 <!--${sakai.ehcache.groupId}${sakai.ehcache.artifactId}${sakai.ehcache.version}-->
-<!--${sakai.hibernate.groupId}${sakai.hibernate.artifactId}${sakai.hibernate.version}-->
+<!--org.hibernatehibernate-core${sakai.hibernate.version}-->
     <dependency>
       <groupId>hsqldb</groupId>
       <artifactId>hsqldb</artifactId>

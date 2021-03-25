@@ -4,7 +4,7 @@
   <parent>
     <artifactId>rsmart-customer</artifactId>
     <groupId>com.rsmart</groupId>
-    <version>20-SNAPSHOT</version>
+    <version>21-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <name>rSmart Customer Integration Impl</name>
@@ -78,18 +78,18 @@
       sakai-db-impl is a part of the kernel implementation, dependency removed
       org.sakaiprojectsakai-db-impl${sakai.version}-->
     <dependency>
-      <groupId>${sakai.spring.groupId}</groupId>
-      <artifactId>${sakai.spring.artifactId}</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>${sakai.spring.groupId}</groupId>
+      <groupId>org.springframework</groupId>
       <artifactId>spring-orm</artifactId>
     </dependency>
 <!--org.sakaiprojectsakai-db-storage${sakai.version}-->
 
     <dependency>
-      <groupId>${sakai.hibernate.groupId}</groupId>
-      <artifactId>${sakai.hibernate.artifactId}</artifactId>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.sakaiproject.assignment</groupId>

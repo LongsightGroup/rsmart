@@ -4,7 +4,7 @@
   <parent>
     <artifactId>rsmart-tool</artifactId>
     <groupId>com.rsmart</groupId>
-    <version>20-SNAPSHOT</version>
+    <version>21-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
   <name>rsmart-tool-impl</name>
@@ -27,7 +27,7 @@
      <dependency>
        <groupId>org.sakaiproject.kernel</groupId>
        <artifactId>sakai-kernel-impl</artifactId>
-        <version>20-SNAPSHOT</version>
+        <version>21-SNAPSHOT</version>
      </dependency>
     <dependency>
       <groupId>org.sakaiproject.kernel</groupId>
@@ -95,8 +95,8 @@
       <artifactId>${sakai.ehcache.artifactId}</artifactId>
     </dependency>
     <dependency>
-      <groupId>${sakai.hibernate.groupId}</groupId>
-      <artifactId>${sakai.hibernate.artifactId}</artifactId>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-core</artifactId>
     </dependency>
     <dependency>
       <groupId>hsqldb</groupId>
@@ -104,11 +104,11 @@
       <version>1.7.3.3</version>
     </dependency>
     <dependency>
-      <groupId>${sakai.spring.groupId}</groupId>
-      <artifactId>${sakai.spring.artifactId}</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>${sakai.spring.groupId}</groupId>
+      <groupId>org.springframework</groupId>
       <artifactId>spring-orm</artifactId>
     </dependency>
 <!-- for the concurrent collections -->

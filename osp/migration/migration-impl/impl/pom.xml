@@ -4,7 +4,7 @@
   <parent>
     <artifactId>osp-repository_migration</artifactId>
     <groupId>org.sakaiproject.osp</groupId>
-    <version>20-SNAPSHOT</version>
+    <version>21-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
   <groupId>org.sakaiproject.osp</groupId>
@@ -103,8 +103,8 @@
       <version>h2.1.8</version>
     </dependency>
     <dependency>
-      <groupId>${sakai.hibernate.groupId}</groupId>
-      <artifactId>${sakai.hibernate.artifactId}</artifactId>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-core</artifactId>
       <version>${sakai.hibernate.version}</version>
     </dependency>
     <dependency>
@@ -123,8 +123,8 @@
       <version>${sakai.servletapi.version}</version>
     </dependency>
     <dependency>
-      <groupId>${sakai.spring.groupId}</groupId>
-      <artifactId>${sakai.spring.artifactId}</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
       <version>${sakai.spring.version}</version>
     </dependency>
   </dependencies>

@@ -4,7 +4,7 @@
   <parent>
     <artifactId>rsn-base</artifactId>
     <groupId>com.rsmart</groupId>
-    <version>20-SNAPSHOT</version>
+    <version>21-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>hib-2.1.8-extensions</artifactId>
@@ -21,8 +21,8 @@
   </properties>
   <dependencies>
     <dependency>
-      <groupId>${sakai.hibernate.groupId}</groupId>
-      <artifactId>${sakai.hibernate.artifactId}</artifactId>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-core</artifactId>
       <version>${sakai.hibernate.version}</version>
     </dependency>
   </dependencies>
