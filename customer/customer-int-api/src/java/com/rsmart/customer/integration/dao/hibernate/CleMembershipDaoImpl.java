@@ -66,11 +66,8 @@ public class CleMembershipDaoImpl extends HibernateTemplate implements
 	 * @param section
 	 */
 	public List findCleMembership(String courseNumber) {
-		Object[] os = new Object[1];
-		os[0] = courseNumber;
-
-		List list = find(
-				"select s from CleMembership as s where s.courseNumber = ?", os);
+		List list = findByNamedParam(
+				"select s from CleMembership as s where s.courseNumber = :courseNumber", "courseNumber", courseNumber);
 
 		return list;
 	}
