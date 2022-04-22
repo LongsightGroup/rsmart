@@ -20,7 +20,7 @@
   <parent>
     <artifactId>oauth-base</artifactId>
     <groupId>com.rsmart</groupId>
-    <version>21-SNAPSHOT</version>
+    <version>22-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <name>OAuth Token Service Data Model</name>
@@ -34,7 +34,7 @@
     <dependency>
       <groupId>org.sakaiproject.kernel</groupId>
       <artifactId>sakai-kernel-api</artifactId>
-      <version>21-SNAPSHOT</version>
+      <version>22-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.rsmart</groupId>

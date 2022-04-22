@@ -4,7 +4,7 @@
   <parent>
     <artifactId>rsmart-customer</artifactId>
     <groupId>com.rsmart</groupId>
-    <version>21-SNAPSHOT</version>
+    <version>22-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <name>rSmart Customer Integration Impl</name>
@@ -129,10 +129,6 @@
       <groupId>com.opencsv</groupId>
       <artifactId>opencsv</artifactId>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-    	<groupId>org.sakaiproject.emailtemplateservice</groupId>
-    	<artifactId>emailtemplateservice-api</artifactId>
     </dependency>
     <dependency>
         <groupId>org.sakaiproject.hierarchy</groupId>
