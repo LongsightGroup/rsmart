@@ -152,6 +152,7 @@
        </property>
        <property name="courseManagementService" ref="org.sakaiproject.coursemanagement.api.CourseManagementService"      />
        <property name="aliasService"><ref bean="org.sakaiproject.alias.api.AliasService" /></property>
+       <property name="shortenedUrlService"><ref bean="org.sakaiproject.shortenedurl.api.ShortenedUrlService" /></property>
 	</bean>
 
    <bean id="com.rsmart.customer.integration.processor.cle.CleMembershipProcessor" class="com.rsmart.customer.integration.processor.cle.CleMembershipProcessor">

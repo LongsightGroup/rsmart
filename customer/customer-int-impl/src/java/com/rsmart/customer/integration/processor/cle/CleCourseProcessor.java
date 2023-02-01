@@ -21,13 +21,8 @@ import com.rsmart.customer.integration.processor.BaseCsvFileProcessor;
 import com.rsmart.customer.integration.processor.ProcessorState;
 import com.rsmart.customer.integration.util.SiteHelper;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
+import java.util.Map.Entry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.alias.api.AliasService;
@@ -43,6 +38,7 @@ import org.sakaiproject.entity.cover.EntityManager;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.exception.PermissionException;
 import org.sakaiproject.id.cover.IdManager;
+import org.sakaiproject.shortenedurl.api.ShortenedUrlService;
 import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SitePage;
 import org.sakaiproject.site.api.SiteService;
@@ -50,6 +46,8 @@ import org.sakaiproject.site.api.ToolConfiguration;
 import org.sakaiproject.thread_local.cover.ThreadLocalManager;
 import org.sakaiproject.tool.cover.ToolManager;
 import org.sakaiproject.user.api.UserDirectoryService;
+import org.sakaiproject.util.ArrayUtil;
+import org.sakaiproject.util.Web;
 
 /**
  * Sis Course Processor
@@ -108,6 +106,9 @@ public class CleCourseProcessor extends BaseCsvFileProcessor {
    private boolean extendedReporting = false;
 
     private AliasService aliasService;
+
+    protected ShortenedUrlService shortenedUrlService;
+
    /**
     * optional array of reporting lines, based in extendedReporting property
     */
@@ -548,85 +549,198 @@ public class CleCourseProcessor extends BaseCsvFileProcessor {
 	 * @param masterSite
 	 */
 	private void copyResources(Site newSite, Site masterSite) throws Exception {
-		// import tool content
-		List pageList = newSite.getPages();
+        // import tool content
+        List<SitePage> pages = newSite.getPages();
+        Set<String> toolIds = new HashSet<>();
+        for (SitePage page : pages) {
 
-        if (!((pageList == null) || (pageList.size() == 0))) {
-        	boolean meleteFound = false;
-			for (ListIterator i = pageList.listIterator(); i.hasNext();) {
-				SitePage page = (SitePage) i.next();
+            for (ToolConfiguration toolConfig : page.getTools()) {
+                toolIds.add(toolConfig.getToolId());
+            }
+        }
 
-				List pageToolList = page.getTools();
-                if (pageToolList.isEmpty()){
-                    //no tools on this page, don't blow up just continue
-                    continue;
-                }
-				String toolId = ((ToolConfiguration) pageToolList.get(0))
-						.getTool().getId();
-				if (toolId.equalsIgnoreCase("sakai.resources")) {
-					// handle resource
-					// tool specially
-					transferCopyEntities(toolId, contentHostingService
-							.getSiteCollection(masterSite.getId()),
-							contentHostingService.getSiteCollection(newSite
-									.getId()));
-				}
-				else if("sakai.melete".equalsIgnoreCase(toolId))
-				{
-					meleteFound = true;
-				}
-				else {
-					// other tools, except news and iframe, for some reason these gets copied twice
+        for (String toolId : toolIds) {
+            Map<String,String> entityMap;
+            Map transversalMap = new HashMap();
 
-                    if (!(toolId.equals("sakai.news") || toolId.equals("sakai.iframe"))){
-                        transferCopyEntities(toolId, masterSite.getId(), newSite
-                                .getId());
-                    }
-                }
-			}
-			if(meleteFound)
-			{
-				transferCopyEntities("sakai.melete", masterSite.getId(), newSite.getId());
-			}
-		}
+            if (!toolId.equalsIgnoreCase("sakai.resources")) {
+                entityMap = transferCopyEntities(toolId, masterSite.getId(), newSite.getId());
+            }
+            else {
+                entityMap = transferCopyEntities(toolId, contentHostingService.getSiteCollection(masterSite.getId()), contentHostingService.getSiteCollection(newSite.getId()));
+            }
+
+            if(entityMap != null) {
+                transversalMap.putAll(entityMap);
+            }
+
+            updateEntityReferences(toolId, newSite.getId(), transversalMap, newSite);
+        }
 	}
 
-	/**
-	 * Transfer a copy of all entites from another context for any entity
-	 * producer that claims this tool id.
-	 *
-	 * @param toolId
-	 *            The tool id.
-	 * @param fromContext
-	 *            The context to import from.
-	 * @param toContext
-	 *            The context to import into.
-	 */
-	private void transferCopyEntities(String toolId, String fromContext,
-			String toContext) throws Exception {
-		for (Iterator i = EntityManager.getEntityProducers().iterator(); i
-				.hasNext();) {
-			EntityProducer ep = (EntityProducer) i.next();
-			try
-			{
+    /**
+     * Transfer a copy of all entites from another context for any entity
+     * producer that claims this tool id.
+     *
+     * @param toolId      The tool id.
+     * @param fromContext The context to import from.
+     * @param toContext   The context to import into.
+     */
+	protected Map transferCopyEntities(String toolId, String fromContext, String toContext) {
+
+		Map transversalMap = new HashMap();
+
+		// offer to all EntityProducers
+		for (EntityProducer ep : EntityManager.getEntityProducers()) {
 			if (ep instanceof EntityTransferrer) {
-				EntityTransferrer et = (EntityTransferrer) ep;
+				try {
+					EntityTransferrer et = (EntityTransferrer) ep;
 
-				// if this producer claims this tool id
-				if (arrayUtilContains(et.myToolIds(), toolId)) {
-
-
-                    ThreadLocalManager.set("sakai:ToolComponent:current.placement", new org.sakaiproject.util.Placement(null,toolId,null,null,toContext,null));
-					et.transferCopyEntities(fromContext, toContext, new ArrayList<String>(), null);
+					// if this producer claims this tool id
+					if (ArrayUtil.contains(et.myToolIds(), toolId)) {
+						Map<String,String> entityMap = et.transferCopyEntities(fromContext, toContext, new ArrayList<String>(), null, true);
+						if (entityMap != null) {
+							transversalMap.putAll(entityMap);
+						}
+					}
+				} catch (Throwable t) {
+					logger.warn("Error encountered while asking EntityTransfer to transferCopyEntities from: " + fromContext + " to: " + toContext, t);
 				}
 			}
-			}
-			catch(Exception ex)
+		}
+
+		// record direct URL for this tool in old and new sites, so anyone using the URL in HTML text will
+		// get a proper update for the HTML in the new site
+		// Some tools can have more than one instance. Because getTools should always return tools
+		// in order, we can assume that if there's more than one instance of a tool, the instances
+		// correspond
+
+		Site fromSite = null;
+		Site toSite = null;
+		Collection<ToolConfiguration> fromTools = null;
+		Collection<ToolConfiguration> toTools = null;
+		try
+		{
+			fromSite = siteService.getSite(fromContext);
+			toSite = siteService.getSite(toContext);
+			fromTools = fromSite.getTools(toolId);
+			toTools = toSite.getTools(toolId);
+		}
+		catch (Exception e)
+		{
+			logger.warn("transferCopyEntities: can't get site:" + e.getMessage());
+		}
+
+		// getTools appears to return tools in order. So we should be able to match them
+		if (fromTools != null && toTools != null)
+		{
+			Iterator<ToolConfiguration> toToolIt = toTools.iterator();
+			for (ToolConfiguration fromTool: fromTools)
 			{
-				logger.error("Failed transferCopyEntities for : " + ep.toString(), ex);
+				if (toToolIt.hasNext())
+				{
+					ToolConfiguration toTool = toToolIt.next();
+					String fromUrl = serverConfigurationService.getPortalUrl() + "/directtool/" + Web.escapeUrl(fromTool.getId()) + "/";
+					String toUrl = serverConfigurationService.getPortalUrl() + "/directtool/" + Web.escapeUrl(toTool.getId()) + "/";
+					if (transversalMap.get(fromUrl) == null)
+					{
+						transversalMap.put(fromUrl, toUrl);
+					}
+					if (shortenedUrlService.shouldCopy(fromUrl))
+					{
+						fromUrl = shortenedUrlService.shorten(fromUrl, false);
+						toUrl = shortenedUrlService.shorten(toUrl, false);
+						if (fromUrl != null && toUrl != null)
+						{
+							transversalMap.put(fromUrl, toUrl);
+						}
+					}
+				}
+				else
+				{
+					break;
+				}
+			}
+		}
+
+		return transversalMap;
+	}
+
+    protected void updateEntityReferences(String toolId, String toContext, Map transversalMap, Site newSite)
+    {
+		if (toolId.equalsIgnoreCase("sakai.iframe.site"))
+		{
+			updateSiteInfoToolEntityReferences(transversalMap, newSite);
+		}
+		else
+		{		
+			for (Iterator i = EntityManager.getEntityProducers().iterator(); i.hasNext();)
+			{
+				EntityProducer ep = (EntityProducer) i.next();
+				if (ep instanceof EntityTransferrer)
+				{
+					try
+					{
+						EntityTransferrer et = (EntityTransferrer) ep;
+
+						// if this producer claims this tool id
+						if (ArrayUtil.contains(et.myToolIds(), toolId))
+						{
+							et.updateEntityReferences(toContext, transversalMap);
+						}
+					}
+					catch (Throwable t)
+					{
+						logger.error("Error encountered while asking EntityTransfer to updateEntityReferences at site: " + toContext, t);
+					}
+				}
 			}
 		}
 	}
+    
+	private void updateSiteInfoToolEntityReferences(Map transversalMap, Site newSite)
+	{
+		if(transversalMap != null && transversalMap.size() > 0 && newSite != null)
+		{
+			Set<Entry<String, String>> entrySet = (Set<Entry<String, String>>) transversalMap.entrySet();
+			
+			String msgBody = newSite.getDescription();
+			if(msgBody != null && !"".equals(msgBody))
+			{
+				boolean updated = false;
+				Iterator<Entry<String, String>> entryItr = entrySet.iterator();
+				while(entryItr.hasNext())
+				{
+					Entry<String, String> entry = (Entry<String, String>) entryItr.next();
+					String fromContextRef = entry.getKey();
+					if(msgBody.contains(fromContextRef))
+					{
+						msgBody = msgBody.replace(fromContextRef, entry.getValue());
+						updated = true;
+					}
+				}	
+				if(updated)
+				{
+					//update the site b/c some tools (Lessonbuilder) updates the site structure (add/remove pages) and we don't want to
+					//over write this
+					try
+					{
+						newSite = siteService.getSite(newSite.getId());
+						newSite.setDescription(msgBody);
+						siteService.save(newSite);
+					}
+					catch (IdUnusedException e) {
+						// TODO:
+					}
+					catch (PermissionException p)
+					{
+						// TODO:
+					}
+				}
+			}
+		}
+	}
+
    /**
     * Get Report String
     *
@@ -805,6 +919,10 @@ public class CleCourseProcessor extends BaseCsvFileProcessor {
 
     public void setCourseManagementService(CourseManagementService courseManagementService) {
         this.courseManagementService = courseManagementService;
+    }
+
+    public void setShortenedUrlService(ShortenedUrlService shortenedUrlService) {
+        this.shortenedUrlService = shortenedUrlService;
     }
 
     public boolean isPublishOverride() {
